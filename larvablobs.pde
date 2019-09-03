@@ -8,6 +8,8 @@ Capture cam;
 BlobDetection theBlobDetection;
 AudioPlayer rain;
 AudioPlayer bird;
+AudioPlayer colony; 
+AudioPlayer mang;
 boolean debug = false;
 int topRight = 0;
 int topLeft = 0;
@@ -21,7 +23,9 @@ void setup() {
   minim = new Minim(this);
   out = minim.getLineOut();  
   rain = minim.loadFile("rain.mp3", 2048);
-  bird = minim.loadFile("bird.mp3", 2048);
+  //bird = minim.loadFile("bird.mp3", 2048);
+  colony = minim.loadFile("colony31.mp3", 2048);
+  mang = minim.loadFile("mangfield.mp3", 2048);
   size(1240, 720);
   String[] cameras = Capture.list();
   cam = new Capture(this, cameras[1]);
@@ -31,7 +35,9 @@ void setup() {
   theBlobDetection.setPosDiscrimination(false);
   playIntro();
   rain.loop();
-  bird.loop();
+  colony.loop();
+  mang.loop();
+  //bird.loop();
 }
 void draw(){
   checkCorner();
@@ -40,8 +46,10 @@ void draw(){
   blobCalibrate();
 }
 void play() {
-  rain.setGain(map(bottomLeft, 0, 10, -80, 6));
-  bird.setGain(map(topLeft, 0, 10, -80, 6));
+  rain.shiftGain(rain.getGain(), map(bottomLeft, 0, 10, -80, 6), 500);
+  colony.shiftGain(colony.getGain(), map(topLeft, 0, 10, -80, 6), 500);
+  mang.shiftGain(mang.getGain(), map(bottomRight, 0, 10, -80, 6), 500);
+
   if (topRight > 1) {
     if (second()%2==0) {
       out.playNote( 6.0, 329.63);
@@ -49,11 +57,7 @@ void play() {
       out.playNote( 3.0, 1.9, "E3" );
     }
   }
-  if (bottomRight > 1) {
-    if (second()%3==0) {
-      out.playNote( "G5" );
-    }
-  }
+
 }
 void blobCalibrate() {
   theBlobDetection.setThreshold(threshold);
